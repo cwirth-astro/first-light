@@ -2,11 +2,11 @@
 
 Copy these into the Chrome Web Store Developer Dashboard. The same text works for Microsoft Edge Add-ons.
 
-Upload: `release/observing-homepage-<version>.zip`, built with `npm run package`. Bump `version` in `public/manifest.json` for every update.
+Upload: `release/first-light-<version>.zip`, built with `npm run package`. Bump `version` in `public/manifest.json` for every update.
 
 ## Store listing tab
 
-**Name** (from the manifest): Observing Homepage
+**Name** (from the manifest): First Light
 
 **Summary** (from the manifest description, 132 characters max):
 A new tab page showing what JWST, Hubble, and Rubin are observing, plus your day.

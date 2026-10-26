@@ -1,4 +1,4 @@
-# Observing Homepage
+# First Light
 
 A Chrome new tab page that shows what the James Webb and Hubble space telescopes are observing right now, what Rubin Observatory surveyed most recently, and the rest of your day from Google Calendar. The JWST and Hubble data comes from [Space Telescope Live](https://spacetelescopelive.org).
 
@@ -39,7 +39,7 @@ It currently runs in Chrome and Edge, and Firefox and Safari support is planned.
 
 ## Publish
 
-`npm run package` builds the extension and writes `release/observing-homepage-<version>.zip`, ready to upload to the Chrome Web Store or Microsoft Edge Add-ons. Bump `version` in `public/manifest.json` first. `store/listing.md` has the listing text, the permission justifications and the privacy answers; `store/screenshots/` and `store/promo-small.png` are the listing images; `PRIVACY.md` is the privacy policy.
+`npm run package` builds the extension and writes `release/first-light-<version>.zip`, ready to upload to the Chrome Web Store or Microsoft Edge Add-ons. Bump `version` in `public/manifest.json` first. `store/listing.md` has the listing text, the permission justifications and the privacy answers; `store/screenshots/` and `store/promo-small.png` are the listing images; `PRIVACY.md` is the privacy policy.
 
 Google Calendar access is an optional permission: the extension asks for it when you paste in a calendar address, so installing it only asks for the telescope data sites.
 

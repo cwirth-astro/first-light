@@ -1,8 +1,8 @@
-# Observing Homepage privacy policy
+# First Light privacy policy
 
 _Last updated: October 26, 2026_
 
-Observing Homepage is a browser extension that replaces your new tab page with a clock, live telescope observations, a background picture, a to-do list and, if you connect one, your Google Calendar events for the day.
+First Light is a browser extension that replaces your new tab page with a clock, live telescope observations, a background picture, a to-do list and, if you connect one, your Google Calendar events for the day.
 
 ## What the extension stores
 
