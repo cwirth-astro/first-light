@@ -648,6 +648,17 @@ a:hover {
   }
 }
 
+.settings__footer {
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--hair);
+  font-size: 0.8rem;
+  color: var(--ink-3);
+
+  & a:hover {
+    color: var(--ink);
+  }
+}
+
 .settings__hint {
   margin: 0.6rem 0 0;
   font-size: 0.8rem;

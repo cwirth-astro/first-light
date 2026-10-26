@@ -22,6 +22,7 @@ const DETAILS: { key: keyof ObservationDetails; label: string }[] = [
 ];
 
 const DIALOG_ID = "settings";
+const PRIVACY_URL = "https://github.com/cwirth-astro/first-light/blob/main/PRIVACY.md";
 
 // Newer HTML attributes that React 18's types don't know yet. Invoker commands
 // fall back to a click handler where unsupported (see SettingsButton).
@@ -106,6 +107,12 @@ export function SettingsPanel() {
           <CalendarUrls urls={settings.calendarUrls} onChange={(urls) => update((s) => ({ ...s, calendarUrls: urls }))} />
         )}
       </Section>
+
+      <footer className="settings__footer">
+        <a href={PRIVACY_URL} target="_blank" rel="noreferrer">
+          Privacy policy
+        </a>
+      </footer>
     </dialog>
   );
 }

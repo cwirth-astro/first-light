@@ -38,4 +38,4 @@ The secret address gives read access to that calendar, so don't share it. Anyone
 
 If this policy changes, the new version will be posted here with a new date.
 
-Questions: [CONTACT EMAIL]
+Questions: [chrispw144@gmail.com](mailto:chrispw144@gmail.com)

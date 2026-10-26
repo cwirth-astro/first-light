@@ -61,7 +61,7 @@ Replaces the new tab page with a dashboard that shows live telescope observation
 
 If a reviewer pushes back on the calendar, declare **Personal communications** (calendar events) and explain that they are read on the device to display the schedule and are never transmitted.
 
-**Privacy policy URL:** host `PRIVACY.md` publicly, for example in a public GitHub repo or on GitHub Pages, and paste the link here.
+**Privacy policy URL:** https://github.com/cwirth-astro/first-light/blob/main/PRIVACY.md (also linked at the bottom of the extension's Settings panel)
 
 ## Distribution tab
 
@@ -71,5 +71,4 @@ If a reviewer pushes back on the calendar, declare **Personal communications** (
 
 ## Before going public
 
-- Fill in the contact email in `PRIVACY.md`.
 - Ask Space Telescope Live for permission to use their API. It is undocumented and serves their own site.
