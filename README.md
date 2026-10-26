@@ -56,3 +56,7 @@ Rubin visits come from [ObsLocTAP](https://usdf-rsp.slac.stanford.edu/obsloctap/
 Calendar feeds are parsed with [ical.js](https://github.com/kewisch/ical.js) (`src/api/calendar.ts`), which expands recurring events and their edited occurrences. It is loaded only once a calendar is connected.
 
 The shuffle draws from the ESA/Webb and ESA/Hubble image feeds (`src/api/spaceImages.ts`), leaving out annotated versions, spectra, artist's impressions and event photos. The image list is refreshed daily.
+
+## License
+
+[MIT](LICENSE). Images and observation data belong to their sources (NASA, ESA, STScI, Rubin Observatory and the photographers credited on the page) and are not covered by this license.
