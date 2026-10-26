@@ -6,12 +6,21 @@ export default defineConfig({
   // Relative asset paths so the build works under chrome-extension://
   base: "./",
   server: {
-    // The API sends no CORS headers; in dev, proxy it through Vite.
-    // The built extension calls it directly via host_permissions.
+    // These APIs send no CORS headers; in dev, proxy them through Vite.
+    // The built extension calls them directly via host_permissions.
     proxy: {
       "/api": {
         target: "https://spacetelescopelive.org",
         changeOrigin: true,
+      },
+      "/obsloctap": {
+        target: "https://usdf-rsp.slac.stanford.edu",
+        changeOrigin: true,
+      },
+      "/gcal": {
+        target: "https://calendar.google.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/gcal/, ""),
       },
     },
   },

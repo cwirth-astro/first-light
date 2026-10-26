@@ -49,7 +49,7 @@ function pickRandom(images: BackgroundImage[], avoidId: string | null): string {
   return choices[Math.floor(Math.random() * choices.length)].id;
 }
 
-// A random Webb or Hubble picture for each new tab, plus `next` to reshuffle.
+// A random JWST or Hubble picture for each new tab, plus `next` to reshuffle.
 export function useShuffleImage(enabled: boolean) {
   const [cached] = useState(readPool);
   const [pool, setPool] = useState<BackgroundImage[]>(cached?.images ?? []);

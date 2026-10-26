@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
 import { TELESCOPE_NAMES, type Telescope } from "../api/telescopes";
 import { useObservation } from "../hooks/useObservation";
+import { formatDuration, formatTime, useMinuteTick } from "../lib/time";
 import { useSettings } from "../settings";
 
-const SHORT_NAMES: Record<Telescope, string> = { webb: "Webb", hubble: "Hubble" };
+const SHORT_NAMES: Record<Telescope, string> = { webb: "JWST", hubble: "Hubble" };
 
 export function TelescopeCard({ telescope }: { telescope: Telescope }) {
   const { observation: obs, error, loading } = useObservation(telescope);
@@ -106,24 +106,4 @@ function Progress({ start, end, now }: { start: string | null; end: string | nul
       <span>{formatTime(end)}</span>
     </div>
   );
-}
-
-function useMinuteTick() {
-  const [now, setNow] = useState(Date.now);
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 30_000);
-    return () => clearInterval(timer);
-  }, []);
-  return now;
-}
-
-function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-}
-
-function formatDuration(ms: number) {
-  const mins = Math.round(ms / 60000);
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
-  return h ? `${h}h ${m}m` : `${m}m`;
 }

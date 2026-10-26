@@ -1,0 +1,67 @@
+<!doctype html>
+<!-- Source for the 440×280 small promo tile (store/promo-small.png).
+     Open it from `npm run dev` at /store/promo.html and screenshot at 440×280. -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Observing Homepage promo tile</title>
+    <link rel="stylesheet" href="/node_modules/@fontsource-variable/geist/index.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 440px;
+        height: 280px;
+        overflow: hidden;
+      }
+
+      body {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 0 34px;
+        box-sizing: border-box;
+        font-family: "Geist Variable", system-ui, sans-serif;
+        color: #eef1f7;
+        background:
+          radial-gradient(1px 1px at 40px 50px, #fff, transparent),
+          radial-gradient(1px 1px at 300px 40px, rgb(255 255 255 / 0.8), transparent),
+          radial-gradient(1.5px 1.5px at 380px 230px, #fff, transparent),
+          radial-gradient(1px 1px at 190px 250px, rgb(255 255 255 / 0.7), transparent),
+          radial-gradient(1px 1px at 410px 120px, rgb(255 255 255 / 0.6), transparent),
+          radial-gradient(1px 1px at 120px 200px, rgb(255 255 255 / 0.6), transparent),
+          radial-gradient(ellipse 70% 80% at 10% 20%, rgb(120 60 200 / 0.35), transparent),
+          radial-gradient(ellipse 60% 70% at 95% 90%, rgb(30 120 200 / 0.3), transparent),
+          #04050a;
+      }
+
+      img {
+        width: 96px;
+        height: 96px;
+        flex-shrink: 0;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        font-weight: 500;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+
+      p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.4;
+        color: rgb(238 241 247 / 0.72);
+      }
+    </style>
+  </head>
+  <body>
+    <img src="/icons/icon128.png" alt="" />
+    <div>
+      <h1>Observing Homepage</h1>
+      <p>See what JWST, Hubble and Rubin are observing every time you open a tab.</p>
+    </div>
+  </body>
+</html>

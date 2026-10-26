@@ -5,13 +5,15 @@
   --ink-3: rgb(238 241 247 / 0.46);
   --hair: rgb(255 255 255 / 0.12);
   --hair-strong: rgb(255 255 255 / 0.24);
-  --panel: rgb(9 11 19 / 0.52);
+  --panel: rgb(9 11 19 / 0.28);
+  /* Lighter glass behind the telescope readouts, for busy or bright pictures */
+  --panel-faint: rgb(9 11 19 / 0.16);
   --webb: #f2c46d;
   --hubble: #8bbcff;
+  --rubin: #6fd6c6;
   --star: #ffe6b0;
 
   --sans: "Geist Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
@@ -114,21 +116,67 @@ a:hover {
   margin-inline: auto;
   padding: clamp(1.5rem, 1rem + 3vw, 3.5rem) clamp(1rem, 0.5rem + 3vw, 3.5rem) 1.25rem;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(17rem, 22rem);
+  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-rows: auto 1fr auto auto;
   grid-template-areas:
-    "clock  todos"
-    ".      todos"
+    "clock  today"
+    ".      today"
     "scopes scopes"
     "footer footer";
   gap: 2rem clamp(1.5rem, 4vw, 4rem);
 }
 
-@media (width < 56rem) {
+@media (width < 64rem) {
   .home {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto auto 1fr auto auto;
-    grid-template-areas: "clock" "todos" "." "scopes" "footer";
+    grid-template-areas: "clock" "today" "." "scopes" "footer";
+  }
+}
+
+/* One panel holds the calendar and the to-do list, side by side when it has
+   room and stacked when it doesn't */
+.today {
+  grid-area: today;
+  align-self: start;
+  width: 27.5rem;
+  max-width: 100%;
+  container-type: inline-size;
+
+  &:has(.today__section + .today__section) {
+    width: 38rem;
+  }
+}
+
+@media (width < 64rem) {
+  .today,
+  .today:has(.today__section + .today__section) {
+    width: auto;
+  }
+}
+
+.today__body {
+  display: grid;
+  gap: 0.9rem;
+}
+
+@container (width >= 34rem) {
+  .today__body {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .today__body > .today__section:has(+ .today__section) {
+    padding-inline-end: 1.5rem;
+  }
+
+  /* Outranks the stacked divider rule further down */
+  .today__body > .today__section + .today__section {
+    padding-top: 0;
+    padding-inline-start: 1.5rem;
+    border-top: 0;
+    border-inline-start: 1px solid var(--hair);
   }
 }
 
@@ -156,7 +204,7 @@ a:hover {
 }
 
 .clock__period {
-  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
   font-size: 0.2em;
   font-weight: 400;
   letter-spacing: 0.06em;
@@ -165,7 +213,7 @@ a:hover {
 
 .clock__date {
   margin-top: 0.9rem;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   letter-spacing: -0.01em;
   color: var(--ink-2);
 }
@@ -176,17 +224,21 @@ a:hover {
   grid-area: scopes;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
-  gap: 2rem clamp(2rem, 5vw, 5rem);
+  gap: 1rem;
 }
 
 .scope {
   --accent: var(--ink);
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.65rem;
   min-width: 0;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--hair-strong);
+  padding: 1.1rem 1.25rem 1.2rem;
+  border: 1px solid var(--hair);
+  border-radius: 1rem;
+  background: var(--panel-faint);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
 }
 
 .scope--webb {
@@ -197,12 +249,16 @@ a:hover {
   --accent: var(--hubble);
 }
 
+.scope--rubin {
+  --accent: var(--rubin);
+}
+
 .scope__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: var(--mono);
-  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
   letter-spacing: 0.04em;
   color: var(--ink-2);
 }
@@ -230,6 +286,17 @@ a:hover {
     border: 1px solid var(--accent);
     animation: ping 2.4s var(--ease-out) infinite;
   }
+
+  /* Rubin between nights: a steady, dimmer dot */
+  &.is-idle {
+    opacity: 0.55;
+    box-shadow: none;
+
+    &::after {
+      animation: none;
+      opacity: 0;
+    }
+  }
 }
 
 @keyframes ping {
@@ -254,7 +321,7 @@ a:hover {
 .scope__title {
   margin: 0;
   max-width: 62ch;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   line-height: 1.45;
   color: var(--ink-2);
   text-wrap: pretty;
@@ -269,8 +336,8 @@ a:hover {
   flex-wrap: wrap;
   gap: 0.2rem 1rem;
   margin: 0;
-  font-family: var(--mono);
-  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
   color: var(--ink-2);
 
   & span {
@@ -288,8 +355,8 @@ a:hover {
   align-items: center;
   gap: 0.75rem;
   margin-top: 0.15rem;
-  font-family: var(--mono);
-  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
   color: var(--ink-3);
 }
 
@@ -311,8 +378,8 @@ a:hover {
   flex-wrap: wrap;
   gap: 0.35rem 1.5rem;
   margin: 0;
-  font-family: var(--mono);
-  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.875rem;
 
   & div {
     display: flex;
@@ -320,11 +387,12 @@ a:hover {
   }
 
   & dt {
-    color: var(--ink-3);
+    font-weight: 400;
   }
 
   & dd {
     margin: 0;
+    font-weight: 600;
   }
 
   &:empty {
@@ -332,11 +400,17 @@ a:hover {
   }
 }
 
+.scope__link {
+  align-self: flex-start;
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+
 .scope__status,
 .scope__stale {
   margin: 0;
-  font-family: var(--mono);
-  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
   color: var(--ink-3);
 }
 
@@ -356,13 +430,19 @@ a:hover {
   gap: 0.25rem;
   min-width: 0;
   max-width: 36rem;
+  padding: 0.5rem 0.5rem 0.5rem 0.9rem;
+  border: 1px solid var(--hair);
+  border-radius: 0.85rem;
+  background: var(--panel-faint);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
 }
 
 .bg-caption__link {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--ink-3);
   text-shadow: 0 1px 3px rgb(0 0 0 / 0.8);
 
@@ -378,13 +458,13 @@ a:hover {
 }
 
 .bg-caption__label {
-  font-family: var(--mono);
-  font-size: 0.65rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.72rem;
   letter-spacing: 0.04em;
 }
 
 .bg-caption__title {
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   color: var(--ink-2);
 }
 
@@ -433,12 +513,29 @@ a:hover {
   }
 }
 
+.pill-button {
+  align-self: flex-start;
+  padding: 0.5rem 0.9rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ink);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--bg);
+  cursor: pointer;
+
+  &:hover {
+    background: rgb(255 255 255 / 0.85);
+  }
+}
+
 .text-button {
   padding: 0;
   border: 0;
   background: none;
-  font-family: var(--mono);
-  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
   color: var(--ink-3);
   cursor: pointer;
 
@@ -543,7 +640,7 @@ a:hover {
 
   & h3 {
     margin-bottom: 0.6rem;
-    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
     font-size: 0.7rem;
     font-weight: 400;
     letter-spacing: 0.06em;
@@ -555,6 +652,49 @@ a:hover {
   margin: 0.6rem 0 0;
   font-size: 0.8rem;
   color: var(--ink-3);
+}
+
+.calendar-urls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.25rem 0 0.5rem;
+
+  & label {
+    font-size: 0.8rem;
+    color: var(--ink-2);
+  }
+
+  & textarea {
+    width: 100%;
+    min-block-size: 2lh;
+    max-block-size: 8lh;
+    /* Grows with its contents where supported; scrolls elsewhere */
+    field-sizing: content;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--hair);
+    border-radius: 0.6rem;
+    background: rgb(255 255 255 / 0.06);
+    font: inherit;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--ink);
+    resize: vertical;
+    overflow-wrap: anywhere;
+
+    &::placeholder {
+      color: var(--ink-3);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--hair-strong);
+    }
+
+    &[aria-invalid="true"] {
+      border-color: rgb(255 140 120 / 0.6);
+    }
+  }
 }
 
 .segmented {
@@ -652,11 +792,9 @@ a:hover {
   }
 }
 
-/* ---------- To-do list ---------- */
+/* ---------- Panels: calendar and to-do list ---------- */
 
-.todos {
-  grid-area: todos;
-  align-self: start;
+.panel {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -669,22 +807,103 @@ a:hover {
   box-shadow: 0 1.5rem 4rem -1.5rem rgb(0 0 0 / 0.6);
 }
 
-.todos__header {
+.today__title {
+  font-size: 1.125rem;
+  letter-spacing: -0.015em;
+}
+
+.today__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  & + & {
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--hair);
+  }
+}
+
+.panel__header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
 
-  & h2 {
-    font-size: 0.95rem;
-    letter-spacing: -0.01em;
+  & h3 {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-2);
   }
 }
 
-.todos__count {
-  font-family: var(--mono);
-  font-size: 0.72rem;
+.panel__count {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
   color: var(--ink-3);
 }
+
+.panel__empty {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--ink-3);
+}
+
+/* ---------- Calendar ---------- */
+
+.agenda__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.agenda__event {
+  display: grid;
+  grid-template-columns: 4.25rem minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.45rem 0.5rem;
+  border-radius: 0.6rem;
+
+  &.is-live {
+    background: rgb(255 255 255 / 0.07);
+  }
+}
+
+.agenda__time {
+  padding-top: 0.1rem;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+
+  .is-live & {
+    color: var(--star);
+    font-weight: 600;
+  }
+}
+
+.agenda__details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.agenda__title {
+  font-size: 1rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.agenda__sub {
+  overflow: hidden;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- To-do list ---------- */
 
 .todos__input,
 .todo__edit {
@@ -694,7 +913,7 @@ a:hover {
   border-radius: 0.6rem;
   background: rgb(255 255 255 / 0.06);
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--ink);
   transition:
     background-color 0.15s ease,
@@ -793,7 +1012,7 @@ a:hover {
   flex: 1;
   min-width: 0;
   padding-block: 0.55rem;
-  font-size: 0.925rem;
+  font-size: 1rem;
   line-height: 1.4;
   overflow-wrap: anywhere;
   cursor: text;

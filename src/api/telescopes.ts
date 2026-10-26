@@ -41,7 +41,7 @@ export async function fetchCurrent(telescope: Telescope): Promise<Observation> {
   return normalize(telescope, body);
 }
 
-// Webb and Hubble responses differ in field names; map both to one shape.
+// JWST and Hubble responses differ in field names; map both to one shape.
 function normalize(telescope: Telescope, body: any): Observation {
   const d = body.data;
   const p = d.proposal ?? {};
@@ -87,8 +87,9 @@ const INSTRUMENT_NAMES: Record<string, string> = {
 };
 
 // Hubble target names look like "ANY,COLUMBA-I"; drop the qualifier prefix.
+// Strips scheduling prefixes: "ANY,COLUMBA-I" and SIMBAD's "NAME HUBBLE-ULTRA-DEEP-FIELD".
 function cleanHubbleTarget(name: string | undefined): string | undefined {
-  return name?.replace(/^ANY,/, "").replace(/-/g, " ");
+  return name?.replace(/^ANY,/, "").replace(/^NAME[ -]/, "").replace(/-/g, " ");
 }
 
 // The upstream data has "?" where a minus sign was lost to an encoding error

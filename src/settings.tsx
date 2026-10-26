@@ -18,7 +18,11 @@ export interface Settings {
   background: BackgroundMode;
   telescopes: Record<Telescope, boolean>;
   details: ObservationDetails;
+  showRubin: boolean;
   showTodos: boolean;
+  showCalendar: boolean;
+  // Google Calendar "Secret address in iCal format" URLs
+  calendarUrls: string[];
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -33,7 +37,10 @@ export const DEFAULT_SETTINGS: Settings = {
     coordinates: true,
     upNext: true,
   },
+  showRubin: true,
   showTodos: true,
+  showCalendar: true,
+  calendarUrls: [],
 };
 
 // Merge stored settings over defaults so settings added later get a value.

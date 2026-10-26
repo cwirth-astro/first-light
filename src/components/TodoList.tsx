@@ -15,7 +15,9 @@ const BURST_PARTICLES = 8;
 // update inside the callback, before the browser captures the new state.
 function withTransition(update: () => void) {
   if (!document.startViewTransition) return update();
-  document.startViewTransition(() => flushSync(update));
+  const transition = document.startViewTransition(() => flushSync(update));
+  // A quick second change skips this transition; the update still applies.
+  transition.ready.catch(() => {});
 }
 
 export function TodoList() {
@@ -43,11 +45,11 @@ export function TodoList() {
   const clearCompleted = () => withTransition(() => setTodos((prev) => prev.filter((t) => !t.done)));
 
   return (
-    <section className="todos" aria-labelledby="todos-title">
-      <header className="todos__header">
-        <h2 id="todos-title">Today</h2>
+    <section className="today__section todos" aria-labelledby="todos-title">
+      <header className="panel__header">
+        <h3 id="todos-title">To-do</h3>
         {todos.length > 0 && (
-          <span className="todos__count">{remaining ? `${remaining} open` : "All clear"}</span>
+          <span className="panel__count">{remaining ? `${remaining} open` : "All clear"}</span>
         )}
       </header>
 

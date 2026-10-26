@@ -2,9 +2,13 @@
   "manifest_version": 3,
   "name": "Observing Homepage",
   "version": "0.1.0",
-  "description": "A new tab page showing what JWST and Hubble are observing right now.",
+  "description": "A new tab page showing what JWST, Hubble, and Rubin are observing, plus your day.",
   "chrome_url_overrides": { "newtab": "index.html" },
-  "host_permissions": ["https://spacetelescopelive.org/*"],
+  "host_permissions": [
+    "https://spacetelescopelive.org/*",
+    "https://usdf-rsp.slac.stanford.edu/*"
+  ],
+  "optional_host_permissions": ["https://calendar.google.com/*"],
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
