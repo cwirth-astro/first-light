@@ -28,11 +28,12 @@ function writeCache(apod: Apod) {
   }
 }
 
-export function useApod(): Apod | null {
+export function useApod(enabled: boolean): Apod | null {
   const [cached] = useState(readCache);
   const [apod, setApod] = useState<Apod | null>(cached?.apod ?? null);
 
   useEffect(() => {
+    if (!enabled) return;
     if (cached && Date.now() - cached.fetchedAt < MAX_AGE_MS) return;
     fetchApod()
       .then((fresh) => {
@@ -41,7 +42,7 @@ export function useApod(): Apod | null {
       })
       // Keep the cached picture (or the starfield) if the feed is unreachable.
       .catch(() => {});
-  }, [cached]);
+  }, [enabled, cached]);
 
-  return apod;
+  return enabled ? apod : null;
 }

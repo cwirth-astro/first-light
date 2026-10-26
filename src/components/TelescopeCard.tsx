@@ -1,69 +1,83 @@
 import { useEffect, useState } from "react";
 import { TELESCOPE_NAMES, type Telescope } from "../api/telescopes";
 import { useObservation } from "../hooks/useObservation";
+import { useSettings } from "../settings";
+
+const SHORT_NAMES: Record<Telescope, string> = { webb: "Webb", hubble: "Hubble" };
 
 export function TelescopeCard({ telescope }: { telescope: Telescope }) {
   const { observation: obs, error, loading } = useObservation(telescope);
   const now = useMinuteTick();
+  const [{ details: show }] = useSettings();
+
+  const remaining = obs?.end ? new Date(obs.end).getTime() - now : null;
 
   return (
-    <article className={`card card--${telescope}`}>
-      <div className="card__eyebrow">
-        <span className="card__dot" aria-hidden />
-        {TELESCOPE_NAMES[telescope]} is observing
-      </div>
+    <article className={`scope scope--${telescope}`} aria-label={`${TELESCOPE_NAMES[telescope]} observation`}>
+      <header className="scope__header">
+        <span className="scope__name">
+          <span className="scope__dot" aria-hidden />
+          {SHORT_NAMES[telescope]}
+        </span>
+        {remaining != null && (
+          <span className="scope__remaining">{remaining > 0 ? `${formatDuration(remaining)} left` : "wrapping up"}</span>
+        )}
+      </header>
 
-      {!obs && loading && <p className="card__status">Loading…</p>}
-      {!obs && error && <p className="card__status">Couldn't load observation: {error}</p>}
+      {!obs && loading && <p className="scope__status">Acquiring target…</p>}
+      {!obs && error && <p className="scope__status">Couldn't load observation: {error}</p>}
 
       {obs && (
         <>
-          <h2 className="card__target">
+          <h2 className="scope__target">
             <a href={obs.url}>{obs.target}</a>
           </h2>
-          <p className="card__title">{obs.title}</p>
+          {show.title && <p className="scope__title">{obs.title}</p>}
 
-          <ul className="card__chips">
-            {obs.category && <li className="chip chip--category">{obs.category}</li>}
-            {obs.instruments.map((i) => (
-              <li className="chip" key={i}>
-                {i}
-              </li>
-            ))}
-          </ul>
+          {show.tags && (obs.category || obs.instruments.length > 0) && (
+            <p className="scope__tags">
+              {obs.category && <span>{obs.category}</span>}
+              {obs.instruments.map((i) => (
+                <abbr key={i.name} title={i.title}>
+                  {i.name}
+                </abbr>
+              ))}
+            </p>
+          )}
 
-          <Progress start={obs.start} end={obs.end} now={now} />
+          {show.progress && <Progress start={obs.start} end={obs.end} now={now} />}
 
-          <dl className="card__meta">
-            {obs.pi && (
+          <dl className="scope__meta">
+            {show.pi && obs.pi && (
               <div>
                 <dt>PI</dt>
                 <dd>{obs.pi}</dd>
               </div>
             )}
-            {obs.proposalId && (
+            {show.program && obs.proposalId && (
               <div>
-                <dt>Program</dt>
+                <dt>Prog</dt>
                 <dd>{obs.proposalId}</dd>
               </div>
             )}
-            {obs.ra != null && obs.dec != null && (
+            {show.coordinates && obs.ra != null && obs.dec != null && (
               <div>
-                <dt>RA / Dec</dt>
+                <dt>RA/Dec</dt>
                 <dd>
-                  {obs.ra.toFixed(3)}° / {obs.dec.toFixed(3)}°
+                  {obs.ra.toFixed(3)}° {obs.dec >= 0 ? "+" : "−"}
+                  {Math.abs(obs.dec).toFixed(3)}°
                 </dd>
               </div>
             )}
-            {obs.nextStart && (
+            {show.upNext && obs.nextStart && (
               <div>
-                <dt>Up next</dt>
+                <dt>Next</dt>
                 <dd>{formatTime(obs.nextStart)}</dd>
               </div>
             )}
           </dl>
 
-          {error && <p className="card__stale">Showing cached data. Latest refresh failed.</p>}
+          {error && <p className="scope__stale">Showing cached data. Latest refresh failed.</p>}
         </>
       )}
     </article>
@@ -75,18 +89,21 @@ function Progress({ start, end, now }: { start: string | null; end: string | nul
   const s = new Date(start).getTime();
   const e = new Date(end).getTime();
   const pct = Math.min(100, Math.max(0, ((now - s) / (e - s)) * 100));
-  const remaining = e - now;
 
   return (
-    <div className="progress">
-      <div className="progress__bar">
-        <div className="progress__fill" style={{ width: `${pct}%` }} />
+    <div className="scope__progress">
+      <span>{formatTime(start)}</span>
+      <div
+        className="scope__bar"
+        role="progressbar"
+        aria-label="Observation progress"
+        aria-valuenow={Math.round(pct)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
+        <div className="scope__fill" style={{ width: `${pct}%` }} />
       </div>
-      <div className="progress__labels">
-        <span>{formatTime(start)}</span>
-        <span>{remaining > 0 ? `ends in ${formatDuration(remaining)}` : "wrapping up"}</span>
-        <span>{formatTime(end)}</span>
-      </div>
+      <span>{formatTime(end)}</span>
     </div>
   );
 }

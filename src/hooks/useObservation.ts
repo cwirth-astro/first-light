@@ -9,8 +9,9 @@ interface State {
   loading: boolean;
 }
 
+// Bump the version when the Observation shape changes so old caches are ignored.
 function cacheKey(telescope: Telescope) {
-  return `observation:${telescope}`;
+  return `observation:v2:${telescope}`;
 }
 
 function readCache(telescope: Telescope): Observation | null {

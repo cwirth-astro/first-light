@@ -5,13 +5,18 @@ export const TELESCOPE_NAMES: Record<Telescope, string> = {
   hubble: "Hubble Space Telescope",
 };
 
+export interface Instrument {
+  name: string;
+  title: string;
+}
+
 export interface Observation {
   telescope: Telescope;
   id: string;
   title: string;
   proposalId: string | null;
   category: string | null;
-  instruments: string[];
+  instruments: Instrument[];
   pi: string | null;
   target: string;
   start: string | null;
@@ -50,12 +55,15 @@ function normalize(telescope: Telescope, body: any): Observation {
   return {
     telescope,
     id: d.id,
-    title: p.title ?? "Untitled program",
+    title: fixMinus(p.title) ?? "Untitled program",
     proposalId: p.proposalID ?? null,
     category: p.scientificCategory?.title ?? null,
-    instruments: (p.instruments ?? []).map((i: any) => i.title).filter(Boolean),
+    instruments: (p.instruments ?? []).filter((i: any) => i.title).map((i: any) => ({
+      name: INSTRUMENT_NAMES[i.code] ?? i.title,
+      title: i.title,
+    })),
     pi: p.primaryInvestigator?.formalName || null,
-    target: target || "Unknown target",
+    target: fixMinus(target) || "Unknown target",
     start: (isWebb ? d.scheduledStartTime : d.predictedStartTime) ?? null,
     end: (isWebb ? d.scheduledEndTime : d.predictedEndTime) ?? null,
     ra: toNumber(isWebb ? d.boreSightRightAscensionInDegrees : d.targetRightAscensionInDegrees),
@@ -65,9 +73,28 @@ function normalize(telescope: Telescope, body: any): Observation {
   };
 }
 
+// The API's instrument codes are all caps; show them the way the missions write them.
+const INSTRUMENT_NAMES: Record<string, string> = {
+  NIRCAM: "NIRCam",
+  NIRSPEC: "NIRSpec",
+  MIRI: "MIRI",
+  NIRISS: "NIRISS",
+  FGS: "FGS",
+  WFC3: "WFC3",
+  ACS: "ACS",
+  COS: "COS",
+  STIS: "STIS",
+};
+
 // Hubble target names look like "ANY,COLUMBA-I"; drop the qualifier prefix.
 function cleanHubbleTarget(name: string | undefined): string | undefined {
   return name?.replace(/^ANY,/, "").replace(/-/g, " ");
+}
+
+// The upstream data has "?" where a minus sign was lost to an encoding error
+// ("SNR 0509?67.5"); restore it between digits.
+function fixMinus(text: string | undefined): string | undefined {
+  return text?.replace(/(\d)\?(\d)/g, "$1−$2");
 }
 
 function toNumber(v: unknown): number | null {
