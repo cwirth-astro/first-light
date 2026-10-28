@@ -1,12 +1,12 @@
 # First Light privacy policy
 
-_Last updated: October 26, 2026_
+_Last updated: October 27, 2026_
 
 First Light is a browser extension that replaces your new tab page with a clock, live telescope observations, a background picture, a to-do list and, if you connect one, your Google Calendar events for the day.
 
 ## What the extension stores
 
-Everything the extension stores stays in your browser's local storage on your device:
+Everything the extension stores stays in your browser's local storage on your device, in the extension's own storage area:
 
 - your settings, including any Google Calendar addresses you paste in
 - your to-do items

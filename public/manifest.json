@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
   "name": "First Light",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A new tab page showing what JWST, Hubble, and Rubin are observing, plus your day.",
   "chrome_url_overrides": { "newtab": "index.html" },
+  "permissions": ["storage"],
   "host_permissions": [
     "https://spacetelescopelive.org/*",
     "https://usdf-rsp.slac.stanford.edu/*"

@@ -26,7 +26,7 @@ Open a new tab. Chrome may ask whether to keep the new tab page from this extens
 - **To-do list:** press Enter to add a task, double-click a task to edit it, and hover over it to delete it.
 - **Settings:** click the gear icon (bottom right) to choose the background, show or hide each telescope and each observation detail, or hide the to-do list and calendar.
 
-Settings (including calendar addresses), to-dos and cached data are saved in the extension's `localStorage` on this computer. They stay in sync across open tabs but not across devices, and are deleted if the extension is removed.
+Settings (including calendar addresses) and to-dos are saved in the extension's local storage (`browser.storage.local`), with a copy in `localStorage` so a new tab draws them on its first frame. Extension storage survives clearing browsing data, which wipes an extension page's `localStorage`. Cached telescope and picture data stays in `localStorage`, since it can be fetched again. Everything stays in sync across open tabs but not across devices, and is deleted if the extension is removed.
 
 ## Browsers
 

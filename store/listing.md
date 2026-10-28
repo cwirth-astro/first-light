@@ -49,6 +49,7 @@ Replaces the new tab page with a dashboard that shows live telescope observation
 
 **Permission justifications:**
 
+- **`storage`:** Saves the user's settings and to-do list on their device so they persist between new tabs and survive clearing browsing data. Nothing is synced or sent anywhere.
 - **Host permission `https://spacetelescopelive.org/*`:** Fetches what the JWST and Hubble space telescopes are currently observing. The site's API does not allow cross-origin requests, so the extension needs host access to read it.
 - **Host permission `https://usdf-rsp.slac.stanford.edu/*`:** Fetches Rubin Observatory's recent survey visits from its public ObsLocTAP service, which does not allow cross-origin requests.
 - **Optional host permission `https://calendar.google.com/*`:** Requested only when the user pastes in a Google Calendar "secret address in iCal format", to read that calendar's events and show today's schedule. Google's calendar feeds do not allow cross-origin requests. Not requested at install.
