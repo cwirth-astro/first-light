@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 
-// Optional host permissions, so the extension only asks for a site once a
-// feature needs it. Uses the WebExtensions permissions API (browser.* in
-// Firefox and Safari, chrome.* in Chrome and Edge). Outside an extension, such
-// as `npm run dev`, there is no API and every origin counts as granted.
+// Host permissions. Optional ones let the extension ask for a site only once a
+// feature needs it; Firefox also lets users revoke the required ones, so the
+// telescope cards check those too. Uses the WebExtensions permissions API
+// (browser.* in Firefox and Safari, chrome.* in Chrome and Edge). Outside an
+// extension, such as `npm run dev`, there is no API and every origin counts as
+// granted.
 
 interface PermissionsApi {
   contains(p: { origins: string[] }): Promise<boolean>;

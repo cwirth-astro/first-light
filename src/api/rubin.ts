@@ -6,6 +6,8 @@
 // Docs: https://rubinobservatory.org/for-scientists/rubin-101/live-status
 
 const SITE = "https://usdf-rsp.slac.stanford.edu";
+// Granted at install in Chrome; Firefox lets users turn it off.
+export const RUBIN_PERMISSION = `${SITE}/*`;
 // The service sends no CORS headers; the dev server proxies it (vite.config.ts)
 // and the built extension calls it directly via host_permissions.
 const API_BASE = import.meta.env.DEV ? "" : SITE;

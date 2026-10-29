@@ -34,6 +34,8 @@ Private by design: no account, no ads, no analytics. Your settings, to-dos and c
 
 This extension replaces the new tab page.
 
+Bookmarks bar missing? Chrome shows it on its own new tab page only. Press Ctrl+Shift+B (⌘+Shift+B on a Mac) to show it on every page, including this one.
+
 Data: JWST and Hubble observations from Space Telescope Live (spacetelescopelive.org); Rubin visits from Rubin Observatory's ObsLocTAP service; pictures from NASA APOD, ESA/Webb and ESA/Hubble, credited on the page. Not affiliated with NASA, ESA, STScI or Rubin Observatory.
 ```
 
@@ -73,3 +75,18 @@ If a reviewer pushes back on the calendar, declare **Personal communications** (
 ## Before going public
 
 - Ask Space Telescope Live for permission to use their API. It is undocumented and serves their own site.
+
+## Firefox (addons.mozilla.org)
+
+Submit at https://addons.mozilla.org/developers/ → **Submit a New Add-on** → **On this site**. Upload `release/first-light-<version>-firefox.zip`.
+
+- **Platforms:** Firefox only. Uncheck Firefox for Android: Android doesn't support replacing the new tab page.
+- **Source code:** answer **Yes** and upload `release/first-light-<version>-source.zip`. Build instructions for the reviewer: `npm install`, then `npm run build:firefox`; the output is `dist-firefox/`. Requires Node 20 or later.
+- **Name, summary, description:** as above. In the description, replace the bookmarks-bar line with: "Bookmarks toolbar missing? Choose View → Toolbars → Bookmarks Toolbar → Always Show."
+- **Categories:** Tabs, and Feeds, News & Blogging.
+- **License:** MIT.
+- **Privacy policy:** paste the text of `PRIVACY.md` (AMO takes the text, not a link).
+- **Support email:** chrispw144@gmail.com. **Homepage:** https://github.com/cwirth-astro/first-light
+- **Screenshots:** `store/screenshots/*.png` work as they are.
+- **Data collection** is declared in the manifest (`data_collection_permissions: none`), so there is nothing to fill in.
+- The add-on ID `first-light@cwirth-astro.github.io` (set in `scripts/firefox.mjs`) is permanent once submitted.

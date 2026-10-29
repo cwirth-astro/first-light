@@ -35,7 +35,8 @@ export function isObserving(night: RubinNight | null, now: number) {
   return !!night && now - new Date(night.latest.time).getTime() < OBSERVING_WINDOW_MS;
 }
 
-export function useRubin(): State {
+// Fetches only while `enabled`, so a missing permission doesn't count as an error.
+export function useRubin(enabled: boolean): State {
   const [state, setState] = useState<State>(() => ({ night: readCache(), error: null, loading: true }));
 
   const load = useCallback(async () => {
@@ -49,15 +50,16 @@ export function useRubin(): State {
   }, []);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (enabled) load();
+  }, [load, enabled]);
 
   // Depends on the whole state so a new timer is scheduled after every attempt.
   useEffect(() => {
+    if (!enabled) return;
     const delay = isObserving(state.night, Date.now()) ? OBSERVING_REFRESH_MS : IDLE_REFRESH_MS;
     const timer = setTimeout(load, delay);
     return () => clearTimeout(timer);
-  }, [state, load]);
+  }, [state, load, enabled]);
 
   return state;
 }

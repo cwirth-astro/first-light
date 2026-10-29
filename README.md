@@ -1,6 +1,6 @@
 # First Light
 
-A Chrome new tab page that shows what the James Webb and Hubble space telescopes are observing right now, what Rubin Observatory surveyed most recently, and the rest of your day from Google Calendar. The JWST and Hubble data comes from [Space Telescope Live](https://spacetelescopelive.org).
+A new tab page for Chrome, Edge and Firefox that shows what the James Webb and Hubble space telescopes are observing right now, what Rubin Observatory surveyed most recently, and the rest of your day from Google Calendar. The JWST and Hubble data comes from [Space Telescope Live](https://spacetelescopelive.org).
 
 ## Install
 
@@ -17,6 +17,14 @@ Then in Chrome:
 
 Open a new tab. Chrome may ask whether to keep the new tab page from this extension; choose **Keep it**.
 
+In Firefox, run `npm run firefox`. It builds `dist-firefox/` and opens a separate Firefox window with the extension installed, which reloads when files in `dist-firefox/` change. To load it into your own Firefox instead, run `npm run build:firefox`, open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on…** and pick `dist-firefox/manifest.json`. Temporary add-ons are removed when Firefox quits.
+
+## FAQ
+
+**My bookmarks bar disappeared.** Chrome and Edge show the bookmarks bar on their own new tab page even when it's hidden everywhere else, but not on a new tab page from an extension. To keep it on every page, including First Light, turn on **Always show bookmarks bar**: press ⌘+Shift+B on a Mac or Ctrl+Shift+B on Windows, or open the ⋮ menu → **Bookmarks and lists** → **Show bookmarks bar**. In Edge it's Settings → Appearance → **Show favorites bar** → **Always**; in Firefox, View → Toolbars → Bookmarks Toolbar → **Always Show**. An extension can't change this setting.
+
+**My to-dos or settings disappeared.** Versions before 0.1.1 kept them in the page's `localStorage`, which clearing browsing data erases. 0.1.1 and later keep them in extension storage, which survives that. Removing the extension, or loading an unpacked copy from a different folder, still starts it fresh.
+
 ## Features
 
 - **Telescope cards:** what JWST and Hubble are observing now, with progress through the observation.
@@ -30,16 +38,27 @@ Settings (including calendar addresses) and to-dos are saved in the extension's 
 
 ## Browsers
 
-It currently runs in Chrome and Edge, and Firefox and Safari support is planned. The page avoids Chrome-only APIs, and newer web features fall back gracefully: the settings panel's click-outside and close animations have fallbacks, and the settings button opens the panel with a click handler in browsers without invoker commands. Packaging for Firefox will need a `browser_specific_settings.gecko.id` in the manifest, and Safari needs the extension wrapped in an app with `xcrun safari-web-extension-converter`.
+It runs in Chrome, Edge and Firefox 140 or later; Safari support is planned. The page avoids Chrome-only APIs, and newer web features fall back gracefully: the settings panel's click-outside and close animations have fallbacks, and the settings button opens the panel with a click handler in browsers without invoker commands.
+
+Firefox gets its own build, `dist-firefox/`, written by `scripts/firefox.mjs`: the same files with Firefox's manifest keys added (the add-on ID, a minimum version, and the data-collection declaration addons.mozilla.org requires). Firefox lets users turn off an extension's site access in `about:addons`, so the telescope and Rubin cards check their permission and show an **Allow access** button when it's missing.
+
+Safari needs the extension wrapped in an app with `xcrun safari-web-extension-converter`.
 
 ## Develop
 
 - `npm run dev` runs the page at http://localhost:5173. Vite proxies the telescope, Rubin and Google Calendar requests, because those servers don't allow cross-origin requests from ordinary web pages. The built extension calls them directly using `host_permissions`.
 - `npm run watch` rebuilds `dist/` on every save. After each rebuild, click the reload icon on the extension in `chrome://extensions`.
+- `npm run firefox` builds for Firefox and opens it in a separate Firefox window (see Install). `npm run lint:firefox` runs Mozilla's add-on linter on `dist-firefox/`, the same checks addons.mozilla.org runs on upload. Its two `innerHTML` warnings come from React's own code and are expected.
 
 ## Publish
 
-`npm run package` builds the extension and writes `release/first-light-<version>.zip`, ready to upload to the Chrome Web Store or Microsoft Edge Add-ons. Bump `version` in `public/manifest.json` first. `store/listing.md` has the listing text, the permission justifications and the privacy answers; `store/screenshots/` and `store/promo-small.png` are the listing images; `PRIVACY.md` is the privacy policy.
+`npm run package` builds both versions and writes to `release/`:
+
+- `first-light-<version>.zip` for the Chrome Web Store and Microsoft Edge Add-ons
+- `first-light-<version>-firefox.zip` for addons.mozilla.org
+- `first-light-<version>-source.zip`, the last commit's source. addons.mozilla.org asks for the source of bundled code; reviewers rebuild it with `npm install && npm run build:firefox` (Node 20 or later).
+
+Bump `version` in `public/manifest.json` and `package.json`, and commit, first. `store/listing.md` has the listing text, the permission justifications and the privacy answers; `store/screenshots/` and `store/promo-small.png` are the listing images; `PRIVACY.md` is the privacy policy.
 
 Google Calendar access is an optional permission: the extension asks for it when you paste in a calendar address, so installing it only asks for the telescope data sites.
 

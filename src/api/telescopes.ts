@@ -28,6 +28,8 @@ export interface Observation {
 }
 
 const SITE = "https://spacetelescopelive.org";
+// Granted at install in Chrome; Firefox lets users turn it off.
+export const TELESCOPE_PERMISSION = `${SITE}/*`;
 // In dev the Vite server proxies /api; the built extension calls the site directly.
 const API_BASE = import.meta.env.DEV ? "" : SITE;
 

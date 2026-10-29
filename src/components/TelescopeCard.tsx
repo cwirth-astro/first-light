@@ -1,12 +1,14 @@
-import { TELESCOPE_NAMES, type Telescope } from "../api/telescopes";
+import { TELESCOPE_NAMES, TELESCOPE_PERMISSION, type Telescope } from "../api/telescopes";
 import { useObservation } from "../hooks/useObservation";
+import { useOriginPermission } from "../lib/permissions";
 import { formatDuration, formatTime, useMinuteTick } from "../lib/time";
 import { useSettings } from "../settings";
 
 const SHORT_NAMES: Record<Telescope, string> = { webb: "JWST", hubble: "Hubble" };
 
 export function TelescopeCard({ telescope }: { telescope: Telescope }) {
-  const { observation: obs, error, loading } = useObservation(telescope);
+  const [allowed, allow] = useOriginPermission(TELESCOPE_PERMISSION);
+  const { observation: obs, error, loading } = useObservation(telescope, allowed === true);
   const now = useMinuteTick();
   const [{ details: show }] = useSettings();
 
@@ -24,7 +26,8 @@ export function TelescopeCard({ telescope }: { telescope: Telescope }) {
         )}
       </header>
 
-      {!obs && loading && <p className="scope__status">Acquiring target…</p>}
+      {!obs && allowed === false && <AccessNeeded site="spacetelescopelive.org" onAllow={allow} />}
+      {!obs && allowed && loading && <p className="scope__status">Acquiring target…</p>}
       {!obs && error && <p className="scope__status">Couldn't load observation: {error}</p>}
 
       {obs && (
@@ -105,5 +108,18 @@ function Progress({ start, end, now }: { start: string | null; end: string | nul
       </div>
       <span>{formatTime(end)}</span>
     </div>
+  );
+}
+
+// Shown when the browser hasn't granted access to a card's data source, which
+// happens in Firefox if the user turns off the extension's site access.
+export function AccessNeeded({ site, onAllow }: { site: string; onAllow: () => void }) {
+  return (
+    <p className="scope__status">
+      First Light needs permission to read {site}.{" "}
+      <button className="text-button" onClick={onAllow}>
+        Allow access
+      </button>
+    </p>
   );
 }

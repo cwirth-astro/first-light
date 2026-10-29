@@ -31,7 +31,8 @@ function writeCache(observation: Observation) {
   }
 }
 
-export function useObservation(telescope: Telescope): State {
+// Fetches only while `enabled`, so a missing permission doesn't count as an error.
+export function useObservation(telescope: Telescope, enabled: boolean): State {
   const [state, setState] = useState<State>(() => ({
     observation: readCache(telescope),
     error: null,
@@ -49,18 +50,19 @@ export function useObservation(telescope: Telescope): State {
   }, [telescope]);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (enabled) load();
+  }, [load, enabled]);
 
   // Refetch when the current observation ends, and at least every 10 minutes.
   // Depends on the whole state so a new timer is scheduled after every attempt.
   useEffect(() => {
+    if (!enabled) return;
     const end = state.observation?.end;
     const untilEnd = end ? new Date(end).getTime() - Date.now() + 5000 : MAX_REFRESH_MS;
     const delay = Math.min(Math.max(untilEnd, 30_000), MAX_REFRESH_MS);
     const timer = setTimeout(load, delay);
     return () => clearTimeout(timer);
-  }, [state, load]);
+  }, [state, load, enabled]);
 
   return state;
 }

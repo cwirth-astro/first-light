@@ -1,12 +1,15 @@
-import { RUBIN_ALL_SKY_URL, RUBIN_SKYMAP_URL } from "../api/rubin";
+import { RUBIN_ALL_SKY_URL, RUBIN_PERMISSION, RUBIN_SKYMAP_URL } from "../api/rubin";
 import { isObserving, useRubin } from "../hooks/useRubin";
+import { AccessNeeded } from "./TelescopeCard";
+import { useOriginPermission } from "../lib/permissions";
 import { formatTime, useMinuteTick } from "../lib/time";
 import { useSettings } from "../settings";
 
 // Rubin has no single target, so the card shows the latest visit and how the
 // night is going, laid out like the JWST and Hubble cards.
 export function RubinCard() {
-  const { night, error, loading } = useRubin();
+  const [allowed, allow] = useOriginPermission(RUBIN_PERMISSION);
+  const { night, error, loading } = useRubin(allowed === true);
   const now = useMinuteTick();
   const [{ details: show }] = useSettings();
 
@@ -23,7 +26,8 @@ export function RubinCard() {
         {night && <span className="scope__remaining">{observing ? "observing now" : nightLabel(night.firstVisit, now)}</span>}
       </header>
 
-      {!night && loading && <p className="scope__status">Checking the survey…</p>}
+      {!night && allowed === false && <AccessNeeded site="usdf-rsp.slac.stanford.edu" onAllow={allow} />}
+      {!night && allowed && loading && <p className="scope__status">Checking the survey…</p>}
       {!night && !loading && !error && <p className="scope__status">No visits in the last three days.</p>}
       {!night && error && <p className="scope__status">Couldn't load the survey: {error}</p>}
 
